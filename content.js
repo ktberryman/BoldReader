@@ -1,25 +1,30 @@
+let bold = false;
+
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-    if (request.action === 'on') {
-      /*
-      document.documentElement.style.filter = 'blur(10px)';
-      sendResponse({ message: 'Website is now totally unreadable.' });
-      */
-      
-      bolded();
+    if (request.action === 'on' && !bold) {
+      bolded(document.body);
+      bold = true;
       sendResponse({ message: 'Bolded' });
     } else if (request.action === 'off') {
-      document.documentElement.style.filter = 'none';
-      sendResponse({ message: 'Webiste is readable again.' });
+      bold = false;
+      location.reload();
+      sendResponse({ message: 'Unbolded' });
     }
   });
 
-  function bolded() {
-    const words = document.body.innerText.match(/\b[A-Za-z]+\b/g);
-    if (words) {
-      const boldText = words.map(word => {
-        return `<strong>${word.substring(0, 3)}</strong>` + `${word.substring(3)}`;
-      });
-      const result = boldText.join(' ');
-      document.body.innerHTML = result;
+function bolded(node) {
+  if (node.nodeType === Node.TEXT_NODE) {
+    const words = node.nodeValue.split(/\b/);
+    const boldText = words.map(word => {
+      return `<strong>${word.substring(0, 3)}</strong>` + `${word.substring(3)}`;
+    });
+  
+    const span = document.createElement('span');
+    span.innerHTML = boldText.join('');
+    node.replaceWith(span);
+  } else if (node.nodeType === Node.ELEMENT_NODE) {
+    for (const child of node.childNodes) {
+      bolded(child);
     }
   }
+}
