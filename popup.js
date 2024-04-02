@@ -1,18 +1,21 @@
 document.addEventListener('DOMContentLoaded', function() {
   var sliderCheckbox = document.getElementById('slider-1');
-  var boldnessSlider = document.getElementById('boldness-slider')
+  var slider2 = document.getElementById('slider-2'); //added this
+  var boldnessSlider = document.getElementById('boldness-slider');
 
-  sliderCheckbox.addEventListener('change', function() {
-    if (this.checked) {
+  function toggleSlider(slider, toggleId) {
+    slider.addEventListener('change', function() {
+      var message = { toggleId: toggleId };
+      if (this.checked) {
+        message.action = 'on';
+      } else {
+        message.action = 'off';
+      }
       chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
-        chrome.tabs.sendMessage(tabs[0].id, { action: 'on'});
+        chrome.tabs.sendMessage(tabs[0].id, message);
       });
-    } else {
-      chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
-        chrome.tabs.sendMessage(tabs[0].id, { action: 'off' });
-      });
-    }
-  });
+    });
+  }
 
   boldnessSlider.addEventListener('input', function() {
     var boldnessValue = parseInt(this.value);
@@ -20,5 +23,10 @@ document.addEventListener('DOMContentLoaded', function() {
       chrome.tabs.sendMessage(tabs[0].id, { action: 'bold', boldness: boldnessValue});
     });
   });
+
+
+  toggleSlider(sliderCheckbox, 'slider-1');
+
+  toggleSlider(slider2, 'slider-2');
 
 });
