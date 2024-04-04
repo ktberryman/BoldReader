@@ -15,7 +15,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
             updateBoldness(request.boldness);
             sendResponse({ message: 'Bolded ' });
         }
-    } else if (request.toggleId === 'slider-2') {
+    } else if (request.toggleId === 'slider-2') {z
         if (request.action === 'on') {
             presetFormat(document.body);
             sendResponse({ message: 'Slider-2 activated' });

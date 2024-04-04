@@ -2,6 +2,14 @@ document.addEventListener('DOMContentLoaded', function() {
   var sliderCheckbox = document.getElementById('slider-1');
   var slider2 = document.getElementById('slider-2'); //added this
   var boldnessSlider = document.getElementById('boldness-slider');
+  var colorPicker = document.getElementById('colorpicker');
+
+    function colorChange(event) {
+        const selectedColor = event.target.value;
+        console.log('Selected Color:', selectedColor);
+    }
+  
+  colorPicker.addEventListener('change', colorChange);
 
   function toggleSlider(slider, toggleId) {
     slider.addEventListener('change', function() {
