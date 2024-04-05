@@ -26,6 +26,9 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     } else if (request.action === 'bold') {
         updateBoldness(request.boldness);
         sendResponse({ message: 'Bolded ' });
+    } else if (request.action === 'color') {
+        updateColor(request.color);
+        sendResponse({ message: 'Set color'})
     }
 });
 
@@ -72,6 +75,16 @@ function unboldText() {
         parent.replaceChild(newNode, node);
     });
     boldedNodes = [];
+}
+
+function updateColor(color) {
+    boldedNodes.forEach(node => {
+        const parent = node.parentNode;
+        const boldElements = node.querySelectorAll('strong');
+        boldElements.forEach(boldElement => {
+            boldElement.style.color = color;
+        });
+    });
 }
 
 function presetFormat(node) {
