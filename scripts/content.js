@@ -55,19 +55,14 @@ function boldText(node, boldness) {
 }
 
 function updateBoldness(boldness) {
-  boldedNodes.forEach(node => {
-      const textContent = node.textContent;
-      const parent = node.parentNode;
-      const words = textContent.split(/\b/);
-      const boldText = words.map(word => {
-          if (word.trim().length === 0) return word;
-          return `<strong>${word.substring(0, boldness)}</strong>${word.substring(boldness)}`;
-      });
-      const span = document.createElement('span');
-      span.innerHTML = boldText.join('');
-      parent.replaceChild(span, node);
-      boldedNodes = [span];
-  });
+    boldedNodes.forEach(node => {
+        const words = node.textContent.split(/\b/);
+        const boldText = words.map(word => {
+            if (word.trim().length === 0) return word;
+            return `<strong>${word.substring(0, boldness)}</strong>${word.substring(boldness)}`;
+        });
+        node.innerHTML = boldText.join('');
+    });
 }
 
 function unboldText() {
