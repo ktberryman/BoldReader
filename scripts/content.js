@@ -88,16 +88,32 @@ function presetFormat(node) {
     textDecoration: 'none',
     textTransform: 'none'
   };
+
+  const headerStyles = {
+    fontSize: '20px', // 20% larger than the body text
+    // Adjust proportionally
+    letterSpacing: '3.2px',
+    wordSpacing: '11.214px',
+    lineHeight: '16.8px',
+    fontWeight: 'bold'
+  };
+
   const textNodes = getTextNodes(node);
+
+
   textNodes.forEach(node => {
     const span = document.createElement('span');
     Object.assign(span.style, presetStyles);
-    // need to make header font 20% larger and adjust line height/letter spacing/word spacing accordingly
+    // headers
+    if (node.parentNode.tagName.match(/^H\d$/)) {
+      Object.assign(span.style, headerStyles);
+    }
     span.textContent = node.textContent;
     const parent = node.parentNode;
     parent.replaceChild(span, node);
     });
   }
+
   // Helper function to get all text nodes in a given node
   function getTextNodes(node) {
     const textNodes = [];
@@ -114,79 +130,3 @@ function presetFormat(node) {
   return textNodes;
   }
 
-/*
-function presetFormat(node) {
-    const isHeader = /^H\d$/.test(node.tagName);
-    // format specified by
-    // https://www.bdadyslexia.org.uk/advice/employers/creating-a-dyslexia-friendly-workplace/dyslexia-friendly-style-guide#:~:text=Use%20sans%20serif%20fonts%2C%20such,may%20request%20a%20larger%20font.
-    const baseStyles = {
-        fontFamily: 'Arial, sans-serif',
-        fontWeight: 'bold',
-        color: '#333333',
-        textDecoration: 'none',
-        textTransform: 'none'
-      };
-
-      // Header styles
-      const headerStyles = {
-        ...baseStyles,
-        fontSize: '19.2px', // 20% larger than 16px
-        letterSpacing: '3.204px', // Adjusted for larger font size
-        wordSpacing: '11.214px', // Adjusted for larger font size
-        lineHeight: '16.8px' // Adjusted for larger font size
-      };
-
-      // Non-header styles
-      const nonHeaderStyles = {
-        ...baseStyles,
-        fontSize: '16px',
-        letterSpacing: '2.67px',
-        wordSpacing: '9.345px',
-        lineHeight: '14px'
-      };
-
-    const styles = isHeader ? headerStyles : nonHeaderStyles;
-
-    const textNodes = getTextNodes(node);
-
-    textNodes.forEach(textNode => {
-      const isDescendantOfHeader = isNodeDescendantOfHeader(textNode, node);
-      const nodeStyles = isDescendantOfHeader ? headerStyles : nonHeaderStyles;
-      const span = document.createElement('span');
-      Object.assign(span.style, nodeStyles);
-      span.textContent = node.textContent;
-      const parent = node.parentNode;
-      parent.replaceChild(span, textNode);
-    });
-  }
-
-  // Helper function to get all text nodes in a given node
-  function getTextNodes(node) {
-    const textNodes = [];
-    function traverseNodes(node) {
-      if (node.nodeType === Node.TEXT_NODE) {
-        textNodes.push(node);
-      } else {
-        for (const child of node.childNodes) {
-          traverseNodes(child);
-        }
-      }
-    }
-    traverseNodes(node);
-    return textNodes;
-  }
-
-  //helper function for header identification
-  function isNodeDescendantOfHeader(node, rootNode) {
-    let currentNode = node.parentNode;
-  
-    while (currentNode && currentNode !== rootNode) {
-      if (/^H\d$/.test(currentNode.tagName)) {
-        return true;
-      }
-      currentNode = currentNode.parentNode;
-    }
-  
-    return false;
-  }
-  */
