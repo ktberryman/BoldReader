@@ -4,7 +4,8 @@
     "version": "1.0",
     "description": "Bionic reader extension.",
     "permissions":[
-        "activeTab"
+        "activeTab",
+        "contextMenus"
     ],
     "background": {
         "service_worker": "background.js"

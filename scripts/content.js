@@ -15,7 +15,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
             updateBoldness(request.boldness);
             sendResponse({ message: 'Bolded ' });
         }
-    } else if (request.toggleId === 'slider-2') {
+    } else if (request.toggleId === 'slider-2') {z
         if (request.action === 'on') {
             presetFormat(document.body);
             sendResponse({ message: 'Slider-2 activated' });
@@ -26,6 +26,12 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     } else if (request.action === 'bold') {
         updateBoldness(request.boldness);
         sendResponse({ message: 'Bolded ' });
+    } else if (request.action === 'color') {
+        updateColor(request.color);
+        sendResponse({ message: 'Set color'})
+    } else if (request.action === 'boldSelected') {
+        boldSelected();
+        sendResponse({message: 'Bolded selection'})
     }
 });
 
@@ -49,19 +55,14 @@ function boldText(node, boldness) {
 }
 
 function updateBoldness(boldness) {
-  boldedNodes.forEach(node => {
-      const textContent = node.textContent;
-      const parent = node.parentNode;
-      const words = textContent.split(/\b/);
-      const boldText = words.map(word => {
-          if (word.trim().length === 0) return word;
-          return `<strong>${word.substring(0, boldness)}</strong>${word.substring(boldness)}`;
-      });
-      const span = document.createElement('span');
-      span.innerHTML = boldText.join('');
-      parent.replaceChild(span, node);
-      boldedNodes = [span];
-  });
+    boldedNodes.forEach(node => {
+        const words = node.textContent.split(/\b/);
+        const boldText = words.map(word => {
+            if (word.trim().length === 0) return word;
+            return `<strong>${word.substring(0, boldness)}</strong>${word.substring(boldness)}`;
+        });
+        node.innerHTML = boldText.join('');
+    });
 }
 
 function unboldText() {
@@ -72,6 +73,30 @@ function unboldText() {
         parent.replaceChild(newNode, node);
     });
     boldedNodes = [];
+}
+
+function updateColor(color) {
+    boldedNodes.forEach(node => {
+        const parent = node.parentNode;
+        const boldElements = node.querySelectorAll('strong');
+        boldElements.forEach(boldElement => {
+            boldElement.style.color = color;
+        });
+    });
+}
+
+function boldSelected() {
+    const selectedText = window.getSelection().toString();
+    const range = window.getSelection().getRangeAt(0);
+    const words = selectedText.split(/\b/);
+    const boldText = words.map(word => {
+      if (word.trim().length === 0) return word;
+      return `<strong>${word.substring(0, 3)}</strong>${word.substring(3)}`;
+    });
+    const span = document.createElement('span');
+    span.innerHTML = boldText.join('');
+    range.deleteContents();
+    range.insertNode(span);
 }
 
 function presetFormat(node) {
