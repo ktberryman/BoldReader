@@ -1,9 +1,11 @@
 let bold = false;
 let boldedNodes = [];
+let currentBoldness = 3;
+let currentColor = '#000000'
 
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     if (request.action === 'bold_on') {
-        boldText(document.body, 3);
+        boldText(document.body, currentBoldness);
         bold = true;
         sendResponse({ message: 'Bolded' });
     } else if (request.action === 'bold_off') {
@@ -61,11 +63,12 @@ function unboldText() {
 
 // range slider
 function updateBoldness(boldness) {
+    currentBoldness = boldness;
     boldedNodes.forEach(node => {
         const words = node.textContent.split(/\b/);
         const boldText = words.map(word => {
             if (word.trim().length === 0) return word;
-            return `<strong>${word.substring(0, boldness)}</strong>${word.substring(boldness)}`;
+            return `<strong style="color: ${currentColor};">${word.substring(0, boldness)}</strong>${word.substring(boldness)}`;
         });
         node.innerHTML = boldText.join('');
     });
@@ -73,6 +76,7 @@ function updateBoldness(boldness) {
 
 // color selection
 function updateColor(color) {
+    currentColor = color;
     boldedNodes.forEach(node => {
         const parent = node.parentNode;
         const boldElements = node.querySelectorAll('strong');
