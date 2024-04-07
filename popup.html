@@ -6,25 +6,53 @@
 </head>
 <body>
   <h1>BOld REader</h1>
-  <h2>Bold Text</h2>
-  <div class="slider-1-container">
-    <input type="checkbox" id="slider-1" class="slider-1-checkbox">
-    <label for="slider-1" class="slider-1"></label>
-  </div>
-  <h2>Range Selector</h2>
-  <div class="range-slider-container">
-    <input type="range" min="1" max="5" value="3" step="1" class="range-slider" id="boldness-slider">
-    <label for="boldness-slider" class = "boldness-slider"></label>
-    <div class="range-indicator" id="rangeValue"></div>
-  </div>
-  <h2>Color Selector</h2>
-  <div class = "slider-1-container">
-    <input type="color" id="colorpicker">
-  </div>
-  <h2>Preset 1</h2>
-  <div class="slider-1-container">
-    <input type="checkbox" id="slider-2" class="slider-1-checkbox">
-    <label for="slider-2" class="slider-1"></label>
+  <div class="container">
+    <div class="column-left">
+      <h2>Custom</h2>
+      <h3>Bold&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Spacing</h3>
+      <div class="slider-1-container small-slider">
+        <input type="checkbox" id="slider-bold" class="slider-1-checkbox">
+        <label for="slider-bold" class="slider-1"></label>
+      </div>
+      <div class="slider-1-container small-slider">
+        <input type="checkbox" id="slider-space" class="slider-1-checkbox">
+        <label for="slider-space" class="slider-1"></label>
+      </div>
+      <h2>Range Selector</h2>
+      <div class="range-slider-container">
+        <input type="range" min="1" max="5" value="3" step="1" class="range-slider" id="boldness-slider">
+        <label for="boldness-slider" class="boldness-slider"></label>
+        <div class="range-indicator" id="rangeValue"></div>
+      </div>
+      <h2>Color Selector</h2>
+      <div class="color-picker-container">
+        <input type="color" id="colorpicker">
+      </div>
+    </div>
+    <div class="column-right">
+      <h2>Custom</h2>
+      <div class="slider-1-container">
+        <input type="checkbox" id="slider-1" class="slider-1-checkbox">
+        <label for="slider-1" class="slider-1"></label>
+      </div>
+      <div class="thumbnail-container">
+        <img src="info_icon.png" alt="Info Icon" class="thumbnail-btn">
+        <div class="thumbnail">
+          <p class="thumbnail-text">Will apply a custom selection of format changes</p>
+        </div>
+      </div>
+      <h2>Preset 1</h2>
+      <div class="slider-1-container">
+        <input type="checkbox" id="slider-2" class="slider-1-checkbox">
+        <label for="slider-2" class="slider-1"></label>
+      </div>
+      <div class="thumbnail-container">
+        <img src="info_icon.png" alt="Info Icon" class="thumbnail-btn">
+        <div class="thumbnail">
+          <p class="thumbnail-text">Will apply a preset based on ADHD style guides provided from reputable sources in psychology.</p>
+        </div>
+      </div>
+    </div>
   </div>
 </body>
 </html>
