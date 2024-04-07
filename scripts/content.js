@@ -29,14 +29,16 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         if (bold) {
             boldText(document.body, currentBoldness);
         }
+        if (recolored) {
+            updateColor(request.color);
+        }
         sendResponse({ message: 'custom applied' });
     } else if (request.action === 'custom_off') {
         location.reload();
         sendResponse({ message: 'custom removed' });
     }else if (request.action === 'preset_on') {
-        // Turn off custom effects
         chrome.runtime.sendMessage({ action: 'custom_off' }, function(response) {
-        console.log(response.message); // Log the response from custom_off
+        console.log(response.message);
     });
         presetFormat(document.body);
         sendResponse({ message: 'preset 1 applied' });
@@ -100,6 +102,11 @@ function statecheck() {
     } else {
         boldText(document.body, boldness);
     }
+    if (!spaced){
+        unspaceText(document.body)
+    }else{
+        spaceText(document.body)
+    }
 }
 // Function to remove spacing changes
 function unspaceText(node) {
@@ -111,6 +118,7 @@ function unspaceText(node) {
         parent.replaceChild(newNode, span);
     });
 }
+// function to add spacing
 function spaceText(node){
     const presetStyles = {
         letterSpacing: '2.67px',
