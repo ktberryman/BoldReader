@@ -2,27 +2,20 @@ let bold = false;
 let boldedNodes = [];
 
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-    if (request.toggleId === 'slider-1') {
-        if (request.action === 'on' && !bold) {
-            boldText(document.body, 3);
-            bold = true;
-            sendResponse({ message: 'Bolded' });
-        } else if (request.action === 'off') {
-            location.reload();
-            bold = false;
-            sendResponse({ message: 'Unbolded' });
-        } else if (request.action === 'bold') {
-            updateBoldness(request.boldness);
-            sendResponse({ message: 'Bolded ' });
-        }
-    } else if (request.toggleId === 'slider-2') {z
-        if (request.action === 'on') {
-            presetFormat(document.body);
-            sendResponse({ message: 'Slider-2 activated' });
-        } else if (request.action === 'off') {
-            location.reload();
-            sendResponse({ message: 'Slider-2 deactivated' });
-        }
+    if (request.action === 'bold_on') {
+        boldText(document.body, 3);
+        bold = true;
+        sendResponse({ message: 'Bolded' });
+    } else if (request.action === 'bold_off') {
+        unboldText();
+        bold = false;
+        sendResponse({ message: 'Unbolded' });
+    } else if (request.action === 'preset_on') {
+        presetFormat(document.body);
+        sendResponse({ message: 'preset 1 applied' });
+    } else if (request.action === 'preset_off') {
+        location.reload();
+        sendResponse({ message: 'preset 1 removed' });
     } else if (request.action === 'bold') {
         updateBoldness(request.boldness);
         sendResponse({ message: 'Bolded ' });
@@ -35,6 +28,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     }
 });
 
+// bold functionality
 function boldText(node, boldness) {
     if (node.nodeType === Node.TEXT_NODE) {
         const words = node.nodeValue.split(/\b/);
@@ -54,6 +48,18 @@ function boldText(node, boldness) {
     }
 }
 
+// bold toggle off
+function unboldText() {
+    boldedNodes.forEach(node => {
+        const textContent = node.textContent;
+        const parent = node.parentNode;
+        const newNode = document.createTextNode(textContent);
+        parent.replaceChild(newNode, node);
+    });
+    boldedNodes = [];
+}
+
+// range slider
 function updateBoldness(boldness) {
     boldedNodes.forEach(node => {
         const words = node.textContent.split(/\b/);
@@ -65,16 +71,7 @@ function updateBoldness(boldness) {
     });
 }
 
-function unboldText() {
-    boldedNodes.forEach(node => {
-        const textContent = node.textContent;
-        const parent = node.parentNode;
-        const newNode = document.createTextNode(textContent);
-        parent.replaceChild(newNode, node);
-    });
-    boldedNodes = [];
-}
-
+// color selection
 function updateColor(color) {
     boldedNodes.forEach(node => {
         const parent = node.parentNode;
@@ -85,6 +82,7 @@ function updateColor(color) {
     });
 }
 
+// bold selection
 function boldSelected() {
     const selectedText = window.getSelection().toString();
     const range = window.getSelection().getRangeAt(0);
@@ -99,6 +97,7 @@ function boldSelected() {
     range.insertNode(span);
 }
 
+// function for preset 1
 function presetFormat(node) {
   // format specified by
   // https://www.bdadyslexia.org.uk/advice/employers/creating-a-dyslexia-friendly-workplace/dyslexia-friendly-style-guide#:~:text=Use%20sans%20serif%20fonts%2C%20such,may%20request%20a%20larger%20font.
@@ -113,7 +112,6 @@ function presetFormat(node) {
     textDecoration: 'none',
     textTransform: 'none'
   };
-
   const headerStyles = {
     fontSize: '20px', // 20% larger than the body text
     // Adjust proportionally
@@ -122,10 +120,7 @@ function presetFormat(node) {
     lineHeight: '16.8px',
     fontWeight: 'bold'
   };
-
   const textNodes = getTextNodes(node);
-
-
   textNodes.forEach(node => {
     const span = document.createElement('span');
     Object.assign(span.style, presetStyles);
@@ -138,8 +133,7 @@ function presetFormat(node) {
     parent.replaceChild(span, node);
     });
   }
-
-  // Helper function to get all text nodes in a given node
+  // helper function for preset
   function getTextNodes(node) {
     const textNodes = [];
     function traverseNodes(node) {
@@ -153,5 +147,5 @@ function presetFormat(node) {
     }
   traverseNodes(node);
   return textNodes;
-  }
+}
 

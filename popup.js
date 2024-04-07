@@ -1,16 +1,44 @@
 document.addEventListener('DOMContentLoaded', function() {
   var sliderCheckbox = document.getElementById('slider-1');
-  var slider2 = document.getElementById('slider-2'); //added this
+  var slider2 = document.getElementById('slider-2');
   var boldnessSlider = document.getElementById('boldness-slider');
   var colorPicker = document.getElementById('colorpicker');
 
-/*
-    function colorChange(event) {
-        const selectedColor = event.target.value;
-        console.log('Selected Color:', selectedColor);
+  // event listener for bold toggle
+  sliderCheckbox.addEventListener('change', function() {
+    if (this.checked) {
+      chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
+        chrome.tabs.sendMessage(tabs[0].id, { action: 'bold_on'} );
+      });
+    } else {
+      chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
+        chrome.tabs.sendMessage(tabs[0].id, { action: 'bold_off' } );
+      });
     }
-    colorPicker.addEventListener('change', colorChange);
-    */
+  });
+
+  // event listener for preset 1 toggle
+  slider2.addEventListener('change', function() {
+    if (this.checked) {
+      chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
+        chrome.tabs.sendMessage(tabs[0].id, { action: 'preset_on'} );
+      });
+    } else {
+      chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
+        chrome.tabs.sendMessage(tabs[0].id, { action: 'preset_off' } );
+      });
+    }
+  });
+
+  // event listener for bold range slider
+  boldnessSlider.addEventListener('input', function() {
+    var boldnessValue = parseInt(this.value);
+    chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
+      chrome.tabs.sendMessage(tabs[0].id, { action: 'bold', boldness: boldnessValue});
+    });
+  });
+
+  // event listener for bold color selection
   colorPicker.addEventListener('change', function() {
     var selectedColor = colorPicker.value;
     console.log('Selected Color:', selectedColor);
@@ -19,30 +47,5 @@ document.addEventListener('DOMContentLoaded', function() {
       });
   });
 
-  function toggleSlider(slider, toggleId) {
-    slider.addEventListener('change', function() {
-      var message = { toggleId: toggleId };
-      if (this.checked) {
-        message.action = 'on';
-      } else {
-        message.action = 'off';
-      }
-      chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
-        chrome.tabs.sendMessage(tabs[0].id, message);
-      });
-    });
-  }
-
-  boldnessSlider.addEventListener('input', function() {
-    var boldnessValue = parseInt(this.value);
-    chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
-      chrome.tabs.sendMessage(tabs[0].id, { action: 'bold', boldness: boldnessValue});
-    });
-  });
-
-
-  toggleSlider(sliderCheckbox, 'slider-1');
-
-  toggleSlider(slider2, 'slider-2');
-
 });
+
