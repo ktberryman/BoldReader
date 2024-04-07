@@ -1,5 +1,6 @@
 let bold = false;
 let spaced = false;
+let recolored = false;
 let boldedNodes = [];
 let currentBoldness = 3;
 let currentColor = '#000000'
@@ -19,16 +20,24 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         sendResponse({ message: 'Space on'})
     } else if (request.action=== 'spaced_off'){
         spaced = false;
-        statecheck(document.body);
+        unspaceText(document.body);
         sendResponse({ message: 'Space off'})
     }else if (request.action === 'custom_on') {
-        statecheck(document.body);
+        if (spaced) {
+            spaceText(document.body);
+        }
+        if (bold) {
+            boldText(document.body, currentBoldness);
+        }
         sendResponse({ message: 'custom applied' });
     } else if (request.action === 'custom_off') {
-
         location.reload();
         sendResponse({ message: 'custom removed' });
     }else if (request.action === 'preset_on') {
+        // Turn off custom effects
+        chrome.runtime.sendMessage({ action: 'custom_off' }, function(response) {
+        console.log(response.message); // Log the response from custom_off
+    });
         presetFormat(document.body);
         sendResponse({ message: 'preset 1 applied' });
     } else if (request.action === 'preset_off') {
@@ -38,6 +47,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         updateBoldness(request.boldness);
         sendResponse({ message: 'Bolded ' });
     } else if (request.action === 'color') {
+        recolored = true;
         updateColor(request.color);
         sendResponse({ message: 'Set color'})
     } else if (request.action === 'boldSelected') {
@@ -52,7 +62,11 @@ function boldText(node, boldness) {
         const words = node.nodeValue.split(/\b/);
         const boldText = words.map(word => {
             if (word.trim().length === 0) return word;
-            return `<strong>${word.substring(0, boldness)}</strong>${word.substring(boldness)}`;
+            if(recolored) {
+                return `<strong style="color: ${currentColor};">${word.substring(0, boldness)}</strong>${word.substring(boldness)}`;
+            } else{
+                return `<strong>${word.substring(0, boldness)}</strong>${word.substring(boldness)}`;
+            }
         });
         const span = document.createElement('span');
         span.innerHTML = boldText.join('');
@@ -76,36 +90,25 @@ function unboldText() {
     });
     boldedNodes = [];
     
-    // Reapply spacing formatting
     if (spaced) {
         spaceText(document.body);
     }
 }
 function statecheck() {
-    // If bold is false, remove bold formatting
     if (!bold) {
         unboldText();
     } else {
-        // If bold is true, apply bold formatting
         boldText(document.body, boldness);
-    }
-
-    // If spaced is false, remove spacing changes
-    if (!spaced) {
-        unspaceText(document.body);
-    } else {
-        // If spaced is true, apply spacing changes
-        spaceText(document.body);
     }
 }
 // Function to remove spacing changes
 function unspaceText(node) {
-    const spans = node.querySelectorAll('span');
+    const spans = node.querySelectorAll('span.space-text');
     spans.forEach(span => {
-        if (span.getAttribute('data-spaced') === 'true') {
-            const textNode = document.createTextNode(span.textContent);
-            span.parentNode.replaceChild(textNode, span);
-        }
+        const textContent = span.textContent;
+        const parent = span.parentNode;
+        const newNode = document.createTextNode(textContent);
+        parent.replaceChild(newNode, span);
     });
 }
 function spaceText(node){
@@ -121,6 +124,7 @@ function spaceText(node){
     const textNodes = getTextNodes(node);
     textNodes.forEach(node => {
       const span = document.createElement('span');
+      span.classList.add('space-text');
       Object.assign(span.style, presetStyles);
       // headers
       if (node.parentNode.tagName.match(/^H\d$/)) {
@@ -135,14 +139,24 @@ function spaceText(node){
 // range slider
 function updateBoldness(boldness) {
     currentBoldness = boldness;
+    if (!bold){
+        bold = true;
+    }
     boldedNodes.forEach(node => {
         const words = node.textContent.split(/\b/);
         const boldText = words.map(word => {
             if (word.trim().length === 0) return word;
-            return `<strong style="color: ${currentColor};">${word.substring(0, boldness)}</strong>${word.substring(boldness)}`;
+            if(recolored) {
+                return `<strong style="color: ${currentColor};">${word.substring(0, boldness)}</strong>${word.substring(boldness)}`;
+            } else{
+                return `<strong>${word.substring(0, boldness)}</strong>${word.substring(boldness)}`;
+            }
         });
         node.innerHTML = boldText.join('');
     });
+    if (spaced){
+        spaceText(document.body);
+    }
 }
 
 // color selection

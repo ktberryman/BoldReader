@@ -36,11 +36,15 @@ document.addEventListener('DOMContentLoaded', function() {
   sliderCheckbox.addEventListener('change', function() {
     if (this.checked) {
       chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
+        slider2.checked = false;
         chrome.tabs.sendMessage(tabs[0].id, { action: 'custom_on'} );
       });
     } else {
       chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
         chrome.tabs.sendMessage(tabs[0].id, { action: 'custom_off' } );
+        bold_toggle.checked = false;
+        space_toggle.checked = false;
+        boldnessSlider.value = 3; 
       });
     }
   });
@@ -49,6 +53,7 @@ document.addEventListener('DOMContentLoaded', function() {
   slider2.addEventListener('change', function() {
     if (this.checked) {
       chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
+        sliderCheckbox.checked = false;
         chrome.tabs.sendMessage(tabs[0].id, { action: 'preset_on'} );
       });
     } else {
