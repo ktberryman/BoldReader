@@ -1,18 +1,46 @@
 document.addEventListener('DOMContentLoaded', function() {
+  var bold_toggle = document.getElementById('bold_toggle');
+  var space_toggle = document.getElementById('space_toggle');
   var sliderCheckbox = document.getElementById('slider-1');
   var slider2 = document.getElementById('slider-2');
   var boldnessSlider = document.getElementById('boldness-slider');
   var colorPicker = document.getElementById('colorpicker');
 
-  // event listener for bold toggle
-  sliderCheckbox.addEventListener('change', function() {
+  // event listener for bold setting toggle
+  bold_toggle.addEventListener('change', function() {
     if (this.checked) {
       chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
         chrome.tabs.sendMessage(tabs[0].id, { action: 'bold_on'} );
+        sliderCheckbox.checked = true;
       });
     } else {
       chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
         chrome.tabs.sendMessage(tabs[0].id, { action: 'bold_off' } );
+      });
+    }
+  });
+    // event listener for spacing toggle
+    space_toggle.addEventListener('change', function() {
+      if (this.checked) {
+        chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
+          chrome.tabs.sendMessage(tabs[0].id, { action: 'spaced_on'} );
+          sliderCheckbox.checked = true;
+        });
+      } else {
+        chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
+          chrome.tabs.sendMessage(tabs[0].id, { action: 'spaced_off' } );
+        });
+      }
+    });
+      // event listener for custom toggle
+  sliderCheckbox.addEventListener('change', function() {
+    if (this.checked) {
+      chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
+        chrome.tabs.sendMessage(tabs[0].id, { action: 'custom_on'} );
+      });
+    } else {
+      chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
+        chrome.tabs.sendMessage(tabs[0].id, { action: 'custom_off' } );
       });
     }
   });
@@ -32,6 +60,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // event listener for bold range slider
   boldnessSlider.addEventListener('input', function() {
+    sliderCheckbox.checked = true;
     var boldnessValue = parseInt(this.value);
     chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
       chrome.tabs.sendMessage(tabs[0].id, { action: 'bold', boldness: boldnessValue});
@@ -40,6 +69,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // event listener for bold color selection
   colorPicker.addEventListener('change', function() {
+    sliderCheckbox.checked = true;
     var selectedColor = colorPicker.value;
     console.log('Selected Color:', selectedColor);
     chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {

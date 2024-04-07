@@ -1,4 +1,5 @@
 let bold = false;
+let spaced = false;
 let boldedNodes = [];
 let currentBoldness = 3;
 let currentColor = '#000000'
@@ -7,12 +8,27 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     if (request.action === 'bold_on') {
         boldText(document.body, currentBoldness);
         bold = true;
-        sendResponse({ message: 'Bolded' });
+        sendResponse({ message: 'Bold on' });
     } else if (request.action === 'bold_off') {
-        unboldText();
         bold = false;
-        sendResponse({ message: 'Unbolded' });
-    } else if (request.action === 'preset_on') {
+        statecheck(document.body);
+        sendResponse({ message: 'Bold off' });
+    } else if (request.action=== 'spaced_on') {
+        spaceText(document.body)
+        spaced = true;
+        sendResponse({ message: 'Space on'})
+    } else if (request.action=== 'spaced_off'){
+        spaced = false;
+        statecheck(document.body);
+        sendResponse({ message: 'Space off'})
+    }else if (request.action === 'custom_on') {
+        statecheck(document.body);
+        sendResponse({ message: 'custom applied' });
+    } else if (request.action === 'custom_off') {
+
+        location.reload();
+        sendResponse({ message: 'custom removed' });
+    }else if (request.action === 'preset_on') {
         presetFormat(document.body);
         sendResponse({ message: 'preset 1 applied' });
     } else if (request.action === 'preset_off') {
@@ -59,7 +75,62 @@ function unboldText() {
         parent.replaceChild(newNode, node);
     });
     boldedNodes = [];
+    
+    // Reapply spacing formatting
+    if (spaced) {
+        spaceText(document.body);
+    }
 }
+function statecheck() {
+    // If bold is false, remove bold formatting
+    if (!bold) {
+        unboldText();
+    } else {
+        // If bold is true, apply bold formatting
+        boldText(document.body, boldness);
+    }
+
+    // If spaced is false, remove spacing changes
+    if (!spaced) {
+        unspaceText(document.body);
+    } else {
+        // If spaced is true, apply spacing changes
+        spaceText(document.body);
+    }
+}
+// Function to remove spacing changes
+function unspaceText(node) {
+    const spans = node.querySelectorAll('span');
+    spans.forEach(span => {
+        if (span.getAttribute('data-spaced') === 'true') {
+            const textNode = document.createTextNode(span.textContent);
+            span.parentNode.replaceChild(textNode, span);
+        }
+    });
+}
+function spaceText(node){
+    const presetStyles = {
+        letterSpacing: '2.67px',
+        lineHeight: '14px',
+    };
+    const headerStyles = {
+        letterSpacing: '3.2px',
+        wordSpacing: '11.214px',
+        lineHeight: '16.8px',
+    };
+    const textNodes = getTextNodes(node);
+    textNodes.forEach(node => {
+      const span = document.createElement('span');
+      Object.assign(span.style, presetStyles);
+      // headers
+      if (node.parentNode.tagName.match(/^H\d$/)) {
+        Object.assign(span.style, headerStyles);
+      }
+      span.textContent = node.textContent;
+      const parent = node.parentNode;
+      parent.replaceChild(span, node);
+      });
+    }
 
 // range slider
 function updateBoldness(boldness) {

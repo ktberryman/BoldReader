@@ -4,6 +4,7 @@ body {
   min-height: 300px;
   max-height: 500px;
 }
+
 .container{
   display:flex;
 }
@@ -135,8 +136,8 @@ h3{
   width: 100px;
 }
 .thumbnail-btn {
-  width: 10px; 
-  height: 10px; 
+  width: 15px; 
+  height: 15px; 
   margin-left: 40px;
 }
 
