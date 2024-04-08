@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', function() {
       chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
         chrome.tabs.sendMessage(tabs[0].id, { action: 'bold_on'} );
         sliderCheckbox.checked = true;
+        slider2.checked = false;
       });
     } else {
       chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
@@ -25,6 +26,7 @@ document.addEventListener('DOMContentLoaded', function() {
         chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
           chrome.tabs.sendMessage(tabs[0].id, { action: 'spaced_on'} );
           sliderCheckbox.checked = true;
+          slider2.checked = false;
         });
       } else {
         chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
@@ -55,6 +57,10 @@ document.addEventListener('DOMContentLoaded', function() {
     if (this.checked) {
       chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
         sliderCheckbox.checked = false;
+        bold_toggle.checked = false;
+        space_toggle.checked = false;
+        boldnessSlider.value = 3; 
+        colorPicker.value = "#000000";
         chrome.tabs.sendMessage(tabs[0].id, { action: 'preset_on'} );
       });
     } else {
@@ -67,6 +73,7 @@ document.addEventListener('DOMContentLoaded', function() {
   // event listener for bold range slider
   boldnessSlider.addEventListener('input', function() {
     sliderCheckbox.checked = true;
+    slider2.checked = false;
     var boldnessValue = parseInt(this.value);
     chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
       chrome.tabs.sendMessage(tabs[0].id, { action: 'bold', boldness: boldnessValue});
@@ -76,6 +83,7 @@ document.addEventListener('DOMContentLoaded', function() {
   // event listener for bold color selection
   colorPicker.addEventListener('change', function() {
     sliderCheckbox.checked = true;
+    slider2.checked = false;
     var selectedColor = colorPicker.value;
     console.log('Selected Color:', selectedColor);
     chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {

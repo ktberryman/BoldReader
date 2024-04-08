@@ -1,12 +1,14 @@
 let bold = false;
 let spaced = false;
 let recolored = false;
+let preset_applied = false;
 let boldedNodes = [];
 let currentBoldness = 3;
 let currentColor = '#000000'
 
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     if (request.action === 'bold_on') {
+        checkpreset();
         boldText(document.body, currentBoldness);
         bold = true;
         sendResponse({ message: 'Bold on' });
@@ -15,6 +17,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         statecheck(document.body);
         sendResponse({ message: 'Bold off' });
     } else if (request.action=== 'spaced_on') {
+        checkpreset();
         spaceText(document.body)
         spaced = true;
         sendResponse({ message: 'Space on'})
@@ -32,6 +35,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         if (recolored) {
             updateColor(request.color);
         }
+        checkpreset();
         sendResponse({ message: 'custom applied' });
     } else if (request.action === 'custom_off') {
         location.reload();
@@ -41,24 +45,38 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         console.log(response.message);
     });
         presetFormat(document.body);
+        //managing states
+        preset_applied = true;
+        bold = false;
+        recolored = false;
+        spaced = false;
         sendResponse({ message: 'preset 1 applied' });
     } else if (request.action === 'preset_off') {
-        location.reload();
+        removePresetFormat(document.body);
+        preset_applied = false;
         sendResponse({ message: 'preset 1 removed' });
     } else if (request.action === 'bold') {
+        checkpreset();
         updateBoldness(request.boldness);
         sendResponse({ message: 'Bolded ' });
     } else if (request.action === 'color') {
         recolored = true;
+        checkpreset();
         updateColor(request.color);
         sendResponse({ message: 'Set color'})
     } else if (request.action === 'boldSelected') {
+        checkpreset();
         boldSelected();
         bold = true;
         sendResponse({message: 'Bolded selection'})
     }
 });
-
+//preset check
+function checkpreset(){
+    if (preset_applied){
+        removePresetFormat(document.body)
+    }
+}
 // bold functionality
 function boldText(node, boldness) {
     if (node.nodeType === Node.TEXT_NODE) {
@@ -221,6 +239,8 @@ function presetFormat(node) {
   const textNodes = getTextNodes(node);
   textNodes.forEach(node => {
     const span = document.createElement('span');
+    //marks things with a class 'data-preset' so that it knows what to remove in order to undo
+    span.classList.add('data-preset');
     Object.assign(span.style, presetStyles);
     // headers
     if (node.parentNode.tagName.match(/^H\d$/)) {
@@ -246,4 +266,11 @@ function presetFormat(node) {
   traverseNodes(node);
   return textNodes;
 }
-
+//removes any preset
+function removePresetFormat(node) {
+    const presetSpans = node.querySelectorAll('span.data-preset');
+    presetSpans.forEach(span => {
+        const textNode = document.createTextNode(span.textContent);
+        span.parentNode.replaceChild(textNode, span);
+    });
+}
