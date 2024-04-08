@@ -54,6 +54,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         sendResponse({ message: 'Set color'})
     } else if (request.action === 'boldSelected') {
         boldSelected();
+        bold = true;
         sendResponse({message: 'Bolded selection'})
     }
 });

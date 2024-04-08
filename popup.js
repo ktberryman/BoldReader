@@ -45,6 +45,7 @@ document.addEventListener('DOMContentLoaded', function() {
         bold_toggle.checked = false;
         space_toggle.checked = false;
         boldnessSlider.value = 3; 
+        colorPicker.value = "#000000";
       });
     }
   });
