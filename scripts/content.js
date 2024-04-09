@@ -69,6 +69,11 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         boldSelected();
         bold = true;
         sendResponse({message: 'Bolded selection'})
+    }  else if (request.action === 'unboldSelected') {
+        checkpreset();
+        unboldSelected();
+        bold = false;
+        sendResponse({message: 'Unbolded selection'})
     }
 });
 //preset check
@@ -209,6 +214,16 @@ function boldSelected() {
     });
     const span = document.createElement('span');
     span.innerHTML = boldText.join('');
+    range.deleteContents();
+    range.insertNode(span);
+}
+
+// unbold selection
+function unboldSelected() {
+    const selectedText = window.getSelection().toString();
+    const range = window.getSelection().getRangeAt(0);
+    const span = document.createElement('span');
+    span.textContent = selectedText;
     range.deleteContents();
     range.insertNode(span);
 }
