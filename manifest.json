@@ -11,12 +11,19 @@
         "service_worker": "background.js"
     },
     "action": {
-        "default_popup": "popup.html"
+        "default_popup": "popup.html",
+        "default_icon": "icons/bold_reader_128.png"
     },
     "content_scripts": [
         {
             "matches": ["<all_urls>"],
             "js": ["scripts/content.js"]
         }
-    ]
+    ],
+    "icons": {
+          "128": "icons/bold_reader_128.png",
+            "48": "icons/bold_reader_48.png",
+            "32": "icons/bold_reader_32.png",
+            "16": "icons/bold_reader_16.png"
+    }
 }

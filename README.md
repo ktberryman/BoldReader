@@ -1,4 +1,4 @@
-# BOld REader
+# BOld REader ![Icon](./icons/bold_reader_48.png)
 
 by Kato Nguyen, Alex Kaylor and Kyle Berryman
 Texas State University
@@ -16,3 +16,6 @@ Additional features for the extension include:
 - Letter spacing adhering to formatting preferences outlined here:
   <https://www.bdadyslexia.org.uk/advice/employers/creating-a-dyslexia-friendly-workplace/dyslexia-friendly-style-guide#:~:text=Use%20sans%20serif%20fonts%2C%20such,may%20request%20a%20larger%20font>
 - Customizable user presets
+
+Additional Notes:
+- Icon designed by FlatIcons
