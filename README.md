@@ -10,3 +10,9 @@ The project involves the development of a Google Chrome Extension designed to in
 - Specifying the range of letters to bold
 - Ability to change the color of the bolded letters
 - Specifying the section of text to apply initial letter bolding
+
+Additional features for the extension include:
+
+- Letter spacing adhering to formatting preferences outlined here:
+  <https://www.bdadyslexia.org.uk/advice/employers/creating-a-dyslexia-friendly-workplace/dyslexia-friendly-style-guide#:~:text=Use%20sans%20serif%20fonts%2C%20such,may%20request%20a%20larger%20font>
+- Customizable user presets
