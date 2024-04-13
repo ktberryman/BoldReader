@@ -26,16 +26,18 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         unspaceText(document.body);
         sendResponse({ message: 'Space off'})
     }else if (request.action === 'custom_on') {
+        checkpreset();
         if (spaced) {
             spaceText(document.body);
         }
         if (bold) {
             boldText(document.body, currentBoldness);
+        }else {
+            unboldText(document.body)
         }
         if (recolored) {
             updateColor(request.color);
         }
-        checkpreset();
         sendResponse({ message: 'custom applied' });
     } else if (request.action === 'custom_off') {
         location.reload();
@@ -54,6 +56,9 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     } else if (request.action === 'preset_off') {
         removePresetFormat(document.body);
         preset_applied = false;
+        bold = false;
+        recolored = false;
+        spaced = false;
         sendResponse({ message: 'preset 1 removed' });
     } else if (request.action === 'bold') {
         checkpreset();
